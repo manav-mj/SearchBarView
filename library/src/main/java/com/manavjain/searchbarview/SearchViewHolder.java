@@ -23,7 +23,6 @@ class SearchViewHolder {
         mCancelTextView = parent.findViewById(R.id.search_view_cancel);
         mClearButton = parent.findViewById(R.id.search_clear_button);
         mRootLayout = parent.findViewById(R.id.search_view_constraint_layout);
-
     }
 
     public EditText getSearchEditText() {
