@@ -1,8 +1,6 @@
 package com.manavjain.searchbarview;
 
 import android.content.Context;
-import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,9 +10,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 /**
  * Created by YourFather on 31-01-2018.
@@ -49,16 +44,21 @@ class SearchAnimator {
         mSearchViewHolder.getSearchEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                if (charSequence.toString().isEmpty()){
+                    showClearButton(true);
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                // No use
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (editable.toString().isEmpty()){
+                    showClearButton(false);
+                }
 
             }
         });
@@ -110,7 +110,7 @@ class SearchAnimator {
     private void showClearButton(boolean show) {
         Animation anim;
         if (show) {
-            anim = AnimationUtils.loadAnimation(mContext, R.anim.fab_open);
+            anim = AnimationUtils.loadAnimation(mContext, R.anim.open_clear_button);
             mSearchViewHolder.getClearButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -119,9 +119,10 @@ class SearchAnimator {
                 }
             });
         } else {
-            anim = AnimationUtils.loadAnimation(mContext, R.anim.fab_close);
+            anim = AnimationUtils.loadAnimation(mContext, R.anim.close_clear_button);
             mSearchViewHolder.getClearButton().setOnClickListener(null);
         }
+        anim.setDuration(150);
         mSearchViewHolder.getClearButton().setVisibility(View.VISIBLE);
         mSearchViewHolder.getClearButton().startAnimation(anim);
     }
