@@ -15,12 +15,9 @@ import android.view.View;
 public class SearchBarView extends View {
     private Context mContext;
 
-    // ConstraintSets for animation
-    private ConstraintSet mSearchSet, mAnimatedSearchSet;
-
     private SearchViewHolder mSearchViewHolder;
     private SearchAnimator mAnimator;
-    private SearchDebounce searchDebounce;
+    private boolean mAnimate;
 
     public SearchBarView(Context context) {
         super(context);
@@ -33,19 +30,47 @@ public class SearchBarView extends View {
 
     private void initialize(Context context) {
         mContext = context;
-        mSearchViewHolder = new SearchViewHolder(this);
+        inflate(mContext, R.layout.search_view, null);
 
-        inflate(context, R.layout.search_view, null);
+        mSearchViewHolder = new SearchViewHolder(this);
+        loadSearchView();
+    }
+
+    private void loadSearchView() {
+        if (!mAnimate) {
+            mSearchViewHolder.getRootLayout().setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mSearchViewHolder.setEditTextFocus(true, mContext);
+                }
+            });
+        }else {
+            mSearchViewHolder.getRootLayout().setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    open();
+                }
+            });
+            mSearchViewHolder.getCancelTextView().setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    close();
+                }
+            });
+        }
     }
 
     @Override
     public void setBackgroundResource(int resId) {
-        super.setBackgroundResource(resId);
+        mSearchViewHolder.getRootLayout().setBackgroundResource(resId);
     }
 
     public void withAnimation(boolean animate) {
-        if (animate)
+        mAnimate = animate;
+        if (mAnimate) {
             mAnimator = new SearchAnimator(mContext, mSearchViewHolder);
+        }
+        loadSearchView();
     }
 
     public void setText(CharSequence text) {
@@ -59,5 +84,15 @@ public class SearchBarView extends View {
     public void addDebounceCallback(long delayMillis, SearchDebounce.DebounceCallback callback){
         SearchDebounce.create(mSearchViewHolder.getSearchEditText(), delayMillis)
                 .watch(callback);
+    }
+
+    public void open(){
+        if (mAnimate)
+            mAnimator.revealSearchView(true);
+    }
+
+    public void close(){
+        if (mAnimate)
+            mAnimator.revealSearchView(false);
     }
 }

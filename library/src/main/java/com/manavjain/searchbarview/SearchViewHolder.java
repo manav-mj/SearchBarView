@@ -1,7 +1,9 @@
 package com.manavjain.searchbarview;
 
+import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,5 +40,16 @@ class SearchViewHolder {
 
     public ConstraintLayout getRootLayout() {
         return mRootLayout;
+    }
+
+    public void setEditTextFocus(boolean b, Context context) {
+        mSearchEditText.setFocusable(b);
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (b) {
+            imm.showSoftInput(mSearchEditText, InputMethodManager.SHOW_IMPLICIT);
+            mSearchEditText.requestFocusFromTouch();
+        }else {
+            imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+        }
     }
 }

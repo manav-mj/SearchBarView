@@ -75,17 +75,11 @@ class SearchAnimator {
         transition.setDuration(SEARCH_ANIMATION_DURATION);
         TransitionManager.beginDelayedTransition(mSearchViewHolder.getRootLayout(), transition);
 
-        mSearchViewHolder.getSearchEditText().setFocusable(reveal);
 
         ConstraintSet animationSet;
 
         if (reveal) {
             animationSet = mAnimatedSearchSet;
-
-            mSearchViewHolder.getSearchEditText().requestFocusFromTouch();
-
-            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(mSearchViewHolder.getSearchEditText(), InputMethodManager.SHOW_IMPLICIT);
 
             if (mListener != null)
                 mListener.onOpen();
@@ -95,15 +89,13 @@ class SearchAnimator {
             if (!mSearchViewHolder.getSearchEditText().getText().toString().isEmpty())
                 mSearchViewHolder.getSearchEditText().setText("");
 
-            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mSearchViewHolder.getSearchEditText().getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
-
             if (mListener != null)
                 mListener.onClose();
         }
 
         alreadyRevealed = !alreadyRevealed;
 
+        mSearchViewHolder.setEditTextFocus(reveal, mContext);
         animationSet.applyTo(mSearchViewHolder.getRootLayout());
     }
 
